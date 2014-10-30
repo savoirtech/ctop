@@ -22,6 +22,7 @@ package com.savoirtech.karaf.commands;
 import java.io.IOException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.karaf.commands.CamelController;
 
 import org.apache.karaf.shell.commands.Argument;
@@ -75,6 +76,7 @@ public class CTop extends AbstractAction {
             System.out.println("\u001B[36m==========================================================================================\u001B[0m");
             System.out.printf("    \u001B[1mRouteID Exch\u001B[0m Total Complete Failed \u001B[1mProcessing Time\u001B[0m Min Max Mean Total Last%n");
             System.out.println();
+            printRouteStats(camelContext);
             // Display notifications
             System.out.printf(" Note: Context stats updated at  %d ms intervals", DEFAULT_REFRESH_INTERVAL);
             System.out.println();
@@ -87,6 +89,12 @@ public class CTop extends AbstractAction {
         System.out.flush();
         System.out.print("\33[1;1H");
         System.out.flush();
+    }
+
+    private void printRouteStats(CamelContext camelContext) {
+        for (Route route : camelContext.getRoutes()) {
+            System.out.printf(" %S %n", route.getId());
+        }
     }
 
     public void setCamelController(CamelController camelController) {
