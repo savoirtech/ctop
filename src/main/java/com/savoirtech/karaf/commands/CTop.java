@@ -20,10 +20,16 @@
 package com.savoirtech.karaf.commands;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.karaf.commands.CamelController;
+import org.apache.camel.spi.ManagementAgent;
 
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
@@ -60,7 +66,7 @@ public class CTop extends AbstractAction {
         return null;
     }
 
-    private void CTop(CamelContext camelContext) throws InterruptedException, IOException {
+    private void CTop(CamelContext camelContext) throws InterruptedException, IOException, Exception {
 
         // Continously update stats to console.
         while (true) {
@@ -91,9 +97,39 @@ public class CTop extends AbstractAction {
         System.out.flush();
     }
 
-    private void printRouteStats(CamelContext camelContext) {
+    private void printRouteStats(CamelContext camelContext) throws Exception {
         for (Route route : camelContext.getRoutes()) {
-            System.out.printf(" %S %n", route.getId());
+            ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
+            if (agent != null) {
+
+                MBeanServer mBeanServer = agent.getMBeanServer();
+                Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + route.getId() + "\",*"), null);
+                Iterator<ObjectName> iterator = set.iterator();
+
+                if (iterator.hasNext()) {
+                     ObjectName routeMBean = iterator.next();
+                     String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
+                     if (camelId != null && camelId.equals(camelContext.getName())) {
+                     
+                         Long exchangesTotal = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesTotal");
+                         Long exchangesCompleted = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesCompleted");
+                         Long exchangesFailed = (Long) mBeanServer.getAttribute(routeMBean, "ExchangesFailed");
+                         Long minProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MinProcessingTime");
+                         Long maxProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MaxProcessingTime");
+                         Long meanProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "MeanProcessingTime");
+                         Long totalProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "TotalProcessingTime");
+                         Long lastProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "LastProcessingTime");
+                         
+                         System.out.printf(" %S      %5d %8d %6d                 %3d %3d %4d %5s %4s %n", 
+                                           route.getId(), 
+                                           exchangesTotal, exchangesCompleted, exchangesFailed,
+                                           minProcessingTime, maxProcessingTime, meanProcessingTime,
+                                           totalProcessingTime, lastProcessingTime);
+                         System.out.println();
+                     }
+                }
+ 
+            }
         }
     }
 
