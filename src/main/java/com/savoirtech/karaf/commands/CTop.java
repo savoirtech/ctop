@@ -21,6 +21,9 @@ package com.savoirtech.karaf.commands;
 
 import java.io.IOException;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.karaf.commands.CamelController;
+
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
@@ -30,7 +33,7 @@ import org.apache.karaf.shell.console.AbstractAction;
 public class CTop extends AbstractAction {
 
     private int             DEFAULT_REFRESH_INTERVAL = 1000;
-    private long            lastUpTime               = 0;
+    protected CamelController camelController;
 
     @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
     private String name;
@@ -41,24 +44,33 @@ public class CTop extends AbstractAction {
 
     protected Object doExecute() throws Exception {
         if (updates != null) {
-             DEFAULT_REFRESH_INTERVAL = Integer.parseInt(updates);
+            DEFAULT_REFRESH_INTERVAL = Integer.parseInt(updates);
         } 
+        CamelContext camelContext = camelController.getCamelContext(name);
+        if (camelContext == null) {
+            System.err.println("Camel context " + name + " not found.");
+            return null; 
+        }
         try {
-            CTop();
+            CTop(camelContext);
         } catch (IOException e) {
             //Ignore
         }
         return null;
     }
 
-    private void CTop() throws InterruptedException, IOException {
+    private void CTop(CamelContext camelContext) throws InterruptedException, IOException {
 
         // Continously update stats to console.
         while (true) {
             Thread.sleep(DEFAULT_REFRESH_INTERVAL);
             //Clear console, then print JVM stats
             clearScreen();
-            System.out.printf(" ctop Camel Context:  Version:  Status:  Uptime: ");
+            System.out.printf(" ctop Camel Context: %S Version: %S Status: %S Uptime: %S %n", 
+                                camelContext.getName(), 
+                                camelContext.getVersion(),
+                                camelContext.getStatus(),
+                                camelContext.getUptime());
             System.out.println();
             System.out.println("\u001B[36m==========================================================================================\u001B[0m");
             System.out.printf("    \u001B[1mRouteID Exch\u001B[0m Total Complete Failed \u001B[1mProcessing Time\u001B[0m Min Max Mean Total Last%n");
@@ -75,6 +87,10 @@ public class CTop extends AbstractAction {
         System.out.flush();
         System.out.print("\33[1;1H");
         System.out.flush();
+    }
+
+    public void setCamelController(CamelController camelController) {
+        this.camelController = camelController;
     }
 
 }

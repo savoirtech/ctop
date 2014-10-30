@@ -25,7 +25,21 @@
     <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.1.0">
         <command>
             <action class="com.savoirtech.karaf.commands.CTop">
+                <property name="camelController" ref="camelController"/>
             </action>
+            <completers>
+                <ref component-id="camelContextCompleter"/>
+                <null/>
+            </completers>
         </command>
     </command-bundle>
+
+    <bean id="camelContextCompleter" class="org.apache.camel.karaf.commands.completers.CamelContextCompleter">
+        <property name="camelController" ref="camelController"/>
+    </bean>
+
+    <bean id="camelController" class="org.apache.camel.karaf.commands.internal.CamelControllerImpl">
+        <property name="bundleContext" ref="blueprintBundleContext"/>
+    </bean>
+
 </blueprint>

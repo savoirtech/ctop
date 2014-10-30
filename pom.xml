@@ -58,13 +58,26 @@
         <maven.compiler.source>1.5</maven.compiler.source>
         <maven.compiler.target>1.5</maven.compiler.target>
 
-
+        <camel.version>2.14.0</camel.version>
         <junit.version>4.11</junit.version>
         <osgi.version>5.0.0</osgi.version>
         <slf4j.version>1.7.7</slf4j.version>
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+
+        <dependency>
+	    <groupId>org.apache.camel.karaf</groupId>
+	    <artifactId>camel-karaf-commands</artifactId>
+	    <version>${camel.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.console</artifactId>
