@@ -80,7 +80,8 @@ public class CTop extends AbstractAction {
                                 camelContext.getUptime());
             System.out.println();
             System.out.println("\u001B[36m==========================================================================================\u001B[0m");
-            System.out.printf("    \u001B[1mRouteID Exch\u001B[0m Total Complete Failed \u001B[1mProcessing Time\u001B[0m Min Max Mean Total Last%n");
+            System.out.printf("         \u001B[1mRouteID             Exchanges\u001B[0m                   \u001B[1mProcessing Time (ms)\u001B[0m%n");
+            System.out.printf("                    Total Complete   Failed      Min      Max     Mean    Total     Last%n");
             System.out.println();
             printRouteStats(camelContext);
             // Display notifications
@@ -120,7 +121,7 @@ public class CTop extends AbstractAction {
                          Long totalProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "TotalProcessingTime");
                          Long lastProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "LastProcessingTime");
                          
-                         System.out.printf(" %S      %5d %8d %6d                 %3d %3d %4d %5s %4s %n", 
+                         System.out.printf(" %15S %8d %8d %8d %8d %8d %8d %8s %8s%n", 
                                            route.getId(), 
                                            exchangesTotal, exchangesCompleted, exchangesFailed,
                                            minProcessingTime, maxProcessingTime, meanProcessingTime,
