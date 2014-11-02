@@ -73,11 +73,16 @@ public class CTop extends AbstractAction {
             Thread.sleep(DEFAULT_REFRESH_INTERVAL);
             //Clear console, then print JVM stats
             clearScreen();
-            System.out.printf(" ctop Camel Context: %S Version: %S Status: %S Uptime: %S %n", 
+            System.out.printf(" \u001B[1mctop\u001B[0m - Context: %s Version: %S Status: %S Uptime: %S%n", 
                                 camelContext.getName(), 
                                 camelContext.getVersion(),
                                 camelContext.getStatus(),
                                 camelContext.getUptime());
+            System.out.printf(" Auto Startup: \u001B[36m%S\u001B[0m Starting Routes: \u001B[36m%S\u001B[0m Suspended: \u001B[36m%S\u001B[0m Tracing: \u001B[36m%S\u001B[0m%n", 
+                                camelContext.isAutoStartup(), 
+                                camelContext.isStartingRoutes(),
+                                camelContext.isSuspended(),
+                                camelContext.isTracing());
             System.out.println();
             System.out.println("\u001B[36m==========================================================================================\u001B[0m");
             System.out.printf("         \u001B[1mRouteID             Exchanges\u001B[0m                   \u001B[1mProcessing Time (ms)\u001B[0m%n");
@@ -121,7 +126,7 @@ public class CTop extends AbstractAction {
                          Long totalProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "TotalProcessingTime");
                          Long lastProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "LastProcessingTime");
                          
-                         System.out.printf(" %15S %8d %8d %8d %8d %8d %8d %8s %8s%n", 
+                         System.out.printf(" %15s %8d %8d %8d %8d %8d %8d %8s %8s%n", 
                                            route.getId(), 
                                            exchangesTotal, exchangesCompleted, exchangesFailed,
                                            minProcessingTime, maxProcessingTime, meanProcessingTime,
