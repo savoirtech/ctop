@@ -209,7 +209,7 @@ public class CTop extends AbstractAction {
         this.camelController = camelController;
     }
 
-    private boolean isColumnName(String name) {
+    public boolean isColumnName(String name) {
 
         if (columns.contains(name)) {
             return true;

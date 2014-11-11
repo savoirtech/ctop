@@ -29,11 +29,10 @@ public class CTopTest extends TestCase {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(TestCase.class);
 
-    public void testToMB() throws Exception {
+    public void testIsColumnName() throws Exception {
         CTop test = new CTop();
-        // One Megabyte
-        //assertEquals("1m", test.bToMB(1048576));
-        assertTrue(true);
+        assertTrue(test.isColumnName("ExchangesTotal"));
+        assertFalse(test.isColumnName("jamie"));
     }
 
 }
