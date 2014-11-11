@@ -16,6 +16,13 @@ To build, invoke:
  
  mvn install
 
+CTop installation:
+===
+
+CTop requires Apache Camel to be present in the container.
+
+ feature:install camel
+
 
 To install in Karaf, invoke from console:
 
