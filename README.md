@@ -31,7 +31,7 @@ To install in Karaf, invoke from console:
 
 To execute command on Karaf, invoke:
 
- aetos:ctop
+ aetos:ctop CamelContextName
 
 
 To exit ctop, press control + c
