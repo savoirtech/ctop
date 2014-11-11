@@ -1,5 +1,5 @@
 /*
- * KTop
+ * CTop
  *
  * Copyright (c) 2014, Savoir Technologies, Inc., All rights reserved.
  *
