@@ -211,6 +211,10 @@ public class CTop extends AbstractAction {
         }
         return result;
     }
+  
+    public void setCamelController(CamelController camelController) {
+        this.camelController = camelController;
+    }
 
     public boolean isColumnName(String name) {
 
