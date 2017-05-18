@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1495116544147
+Build-Jdk: 1.8.0_60
+Built-By: jgoodyear
+Bundle-Blueprint: OSGI-INF/blueprint/shell-log.xml
+Bundle-Description: Provides the OSGi aetos commands
+Bundle-License: http://www.gnu.org/licenses/lgpl-3.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: Apache Karaf :: Shell aetos/ctop Commands
+Bundle-SymbolicName: ctop
+Bundle-Version: 0.2.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: com.savoirtech.karaf.commands;version="0.2.0.SNAPSHOT";u
+ ses:="org.apache.camel.commands,org.apache.karaf.shell.commands,org.apa
+ che.karaf.shell.console"
+Import-Package: org.apache.karaf.shell.commands;version="[4.1,5)",org.ap
+ ache.karaf.shell.console;version="[4.1,5)",javax.management,org.apache.
+ camel;version="[2.19,3)",org.apache.camel.commands;version="[2.19,3)",o
+ rg.apache.camel.commands.completers,org.apache.camel.commands.internal;
+ version="[2.19,3)",org.apache.camel.spi;version="[2.19,3)",org.osgi.ser
+ vice.blueprint;version="[1.0.0,2.0.0)",org.apache.aries.blueprint,org.o
+ sgi.service.blueprint.container;version="[1.0,2)",org.osgi.service.blue
+ print.reflect;version="[1.0,2)",org.apache.felix.service.command;versio
+ n="[1.0,2)"
+Tool: Bnd-2.1.0.20130426-122213
