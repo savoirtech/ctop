@@ -38,7 +38,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.karaf.commands.CamelController;
+import org.apache.camel.commands.CamelController;
 import org.apache.camel.spi.ManagementAgent;
 
 import org.apache.karaf.shell.commands.Argument;
@@ -83,42 +83,49 @@ public class CTop extends AbstractAction {
                return null;
            }
         }
-        CamelContext camelContext = camelController.getCamelContext(name);
-        if (camelContext == null) {
+        if (name == null) {
+           return null;
+        }
+        Map<String, Object> row = camelController.getCamelContextInformation(name);
+        if (row == null || row.isEmpty()) {
             System.err.println("Camel context " + name + " not found.");
-            return null; 
+            return null;
         }
         try {
-            CTop(camelContext);
+            CTop(name);
         } catch (IOException e) {
             //Ignore
         }
         return null;
     }
 
-    private void CTop(CamelContext camelContext) throws InterruptedException, IOException, Exception {
-
+    private void CTop(String name) throws InterruptedException, IOException, Exception {
         // Continously update stats to console.
         while (true) {
+            Map<String, Object> row = camelController.getCamelContextInformation(name);
+            if (row == null || row.isEmpty()) {
+                System.err.println("Camel context " + name + " not found.");
+                break;
+            }
             Thread.sleep(DEFAULT_REFRESH_INTERVAL);
             //Clear console, then print JVM stats
             clearScreen();
             System.out.printf(" \u001B[1mctop\u001B[0m - Context: %s Version: %S Status: %S Uptime: %S%n", 
-                                camelContext.getName(), 
-                                camelContext.getVersion(),
-                                camelContext.getStatus(),
-                                camelContext.getUptime());
+                                row.get("name"),
+                                row.get("version"),
+                                row.get("status"),
+                                row.get("uptime"));
             System.out.printf(" Auto Startup: \u001B[36m%S\u001B[0m Starting Routes: \u001B[36m%S\u001B[0m Suspended: \u001B[36m%S\u001B[0m Tracing: \u001B[36m%S\u001B[0m%n", 
-                                camelContext.isAutoStartup(), 
-                                camelContext.isStartingRoutes(),
-                                camelContext.isSuspended(),
-                                camelContext.isTracing());
+                                row.get("isAutoStartup"), 
+                                row.get("isStartingRoutes"),
+                                row.get("suspended"),
+                                row.get("tracing"));
             System.out.printf(" Sorting On: \u001B[36m%s\u001B[0m Reverse Ordering: \u001B[36m%s\u001B[0m %n", column, ordering);
             System.out.println("\u001B[36m==========================================================================================\u001B[0m");
             System.out.printf("         \u001B[1mRouteID             Exchanges\u001B[0m                   \u001B[1mProcessing Time (ms)\u001B[0m%n");
             System.out.printf("                    Total Complete   Failed      Min      Max     Mean    Total     Last%n");
             System.out.println();
-            printRouteStats(camelContext);
+            //printRouteStats(camelContext);
             // Display notifications
             System.out.printf(" Note: Context stats updated at  %d ms intervals. Use Control + c to exit.", DEFAULT_REFRESH_INTERVAL);
             System.out.println();
@@ -203,10 +210,6 @@ public class CTop extends AbstractAction {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
-    }
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
     }
 
     public boolean isColumnName(String name) {
